@@ -1,5 +1,5 @@
 [package]
-name = "kaspad-stratum"
+name = "apsak-stratum"
 authors = ["fungibilly <fungibilly@proton.me>"]
 license = "MIT"
 version = "0.1.0"

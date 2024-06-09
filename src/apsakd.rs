@@ -1,6 +1,6 @@
 use anyhow::Result;
 use log::{debug, info, warn};
-use proto::kaspad_message::Payload;
+use proto::apsakd_message::Payload;
 use proto::submit_block_response_message::RejectReason;
 pub use proto::RpcBlock;
 use proto::*;
@@ -13,12 +13,12 @@ pub type Send<T> = mpsc::UnboundedSender<T>;
 type Recv<T> = mpsc::UnboundedReceiver<T>;
 
 #[derive(Clone)]
-pub struct KaspadHandle(Send<Payload>);
+pub struct ApsakdHandle(Send<Payload>);
 
-impl KaspadHandle {
+impl ApsakdHandle {
     pub fn new() -> (Self, Recv<Payload>) {
         let (send, recv) = mpsc::unbounded_channel();
-        (KaspadHandle(send), recv)
+        (ApsakdHandle(send), recv)
     }
 
     pub fn submit_block(&self, block: RpcBlock) {
@@ -47,12 +47,12 @@ impl ClientTask {
         let mut stream = client
             .message_stream(
                 UnboundedReceiverStream::new(self.recv_cmd)
-                    .map(|p| KaspadMessage { payload: Some(p) }),
+                    .map(|p| ApsakdMessage { payload: Some(p) }),
             )
             .await?
             .into_inner();
 
-        while let Some(KaspadMessage { payload }) = stream.message().await? {
+        while let Some(ApsakdMessage { payload }) = stream.message().await? {
             let msg = match payload {
                 Some(Payload::GetInfoResponse(info)) => {
                     self.synced = info.is_synced;
@@ -127,13 +127,13 @@ impl Client {
         url: &str,
         pay_address: &str,
         extra_data: &str,
-        handle: KaspadHandle,
+        handle: ApsakdHandle,
         recv_cmd: Recv<Payload>,
     ) -> (Self, Recv<Message>) {
         let (send_msg, recv_msg) = mpsc::unbounded_channel();
 
-        let pay_address = if !pay_address.starts_with("kaspa") {
-            format!("kaspa:{}", pay_address)
+        let pay_address = if !pay_address.starts_with("apsak") {
+            format!("apsak:{}", pay_address)
         } else {
             pay_address.into()
         };
@@ -152,8 +152,8 @@ impl Client {
 
         tokio::spawn(async move {
             match task.run().await {
-                Ok(_) => warn!("Kaspad connection closed"),
-                Err(e) => warn!("Kaspad connection closed: {e}"),
+                Ok(_) => warn!("apsaKd connection closed"),
+                Err(e) => warn!("apsaKd connection closed: {e}"),
             }
         });
 
@@ -185,7 +185,7 @@ mod proto {
     use crate::U256;
     use anyhow::Result;
     use blake2b_simd::Hash;
-    use kaspad_message::Payload;
+    use apsakd_message::Payload;
 
     include!(concat!(env!("OUT_DIR"), "/protowire.rs"));
 
@@ -293,7 +293,6 @@ mod test {
 
     #[test]
     fn header_hash() {
-        // From kaspa-miner
         let header = RpcBlockHeader {
             version: 24565,
             parents: vec![

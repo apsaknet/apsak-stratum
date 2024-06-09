@@ -1,13 +1,13 @@
-mod kaspad;
+mod apsakd;
 mod pow;
 mod stratum;
 mod uint;
 
-use crate::kaspad::KaspadHandle;
+use crate::apsakd::ApsakdHandle;
 pub use crate::uint::U256;
 use anyhow::Result;
 use clap::Parser;
-use kaspad::{Client, Message};
+use apsakd::{Client, Message};
 use log::{debug, info, LevelFilter};
 
 #[derive(Parser)]
@@ -16,7 +16,7 @@ struct Args {
     rpc_url: String,
     #[clap(short, long, default_value = "127.0.0.1:6969")]
     stratum_addr: String,
-    #[clap(short, long, default_value = "kaspad-stratum")]
+    #[clap(short, long, default_value = "apsakd-stratum")]
     extra_data: String,
     #[clap(short, long)]
     mining_addr: String,
@@ -36,10 +36,10 @@ async fn main() -> Result<()> {
 
     env_logger::Builder::new()
         .filter_level(LevelFilter::Info)
-        .filter_module("kaspad_stratum", level)
+        .filter_module("apsakd_stratum", level)
         .init();
 
-    let (handle, recv_cmd) = KaspadHandle::new();
+    let (handle, recv_cmd) = ApsakdHandle::new();
     let stratum = stratum::Stratum::new(&args.stratum_addr, handle.clone()).await?;
 
     let (client, mut msgs) = Client::new(
@@ -52,7 +52,7 @@ async fn main() -> Result<()> {
     while let Some(msg) = msgs.recv().await {
         match msg {
             Message::Info { version, .. } => {
-                info!("Connected to Kaspad {version}");
+                info!("Connected to apsaKd {version}");
             }
             Message::NewTemplate => {
                 debug!("Requesting new template");

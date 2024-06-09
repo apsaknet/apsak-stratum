@@ -1,4 +1,4 @@
-# kaspad-stratum
+# apsakd-stratum
 
 ## Installation
 - Install [Rust](http://rustup.rs)
@@ -9,7 +9,7 @@
 ## Usage
 To start, simply run
 ```commandline
-kaspad-stratum -m <KASPA_WALLET_ADDRESS> -r <KASPAD_RPC_URL>
+apsakd-stratum -m <APSAK_WALLET_ADDRESS> -r <APSAKD_RPC_URL>
 ```
 This will start a stratum server at `127.0.0.1:6969`.
 

@@ -1,6 +1,6 @@
 use super::jobs::{JobParams, Jobs, PendingResult};
 use super::{Id, Request, Response};
-use crate::kaspad::{KaspadHandle, RpcBlock};
+use crate::apsakd::{ApsakdHandle, RpcBlock};
 use anyhow::Result;
 use log::{debug, info, warn};
 use serde::Serialize;
@@ -72,7 +72,7 @@ pub struct Stratum {
 }
 
 impl Stratum {
-    pub async fn new(host: &str, handle: KaspadHandle) -> Result<Self> {
+    pub async fn new(host: &str, handle: ApsakdHandle) -> Result<Self> {
         let (send, recv) = watch::channel(None);
         let listener = TcpListener::bind(host).await?;
         info!("Listening on {host}");

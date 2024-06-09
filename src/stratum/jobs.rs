@@ -1,5 +1,5 @@
 use super::{Id, Response};
-use crate::kaspad::{KaspadHandle, RpcBlock};
+use crate::apsakd::{ApsakdHandle, RpcBlock};
 use crate::U256;
 use anyhow::Result;
 use log::debug;
@@ -15,7 +15,7 @@ pub struct Jobs {
 }
 
 impl Jobs {
-    pub fn new(handle: KaspadHandle) -> Self {
+    pub fn new(handle: ApsakdHandle) -> Self {
         Self {
             inner: Arc::new(RwLock::new(JobsInner {
                 next: 0,
@@ -93,7 +93,7 @@ impl Jobs {
 
 struct JobsInner {
     next: u8,
-    handle: KaspadHandle,
+    handle: ApsakdHandle,
     jobs: Vec<RpcBlock>,
 }
 
